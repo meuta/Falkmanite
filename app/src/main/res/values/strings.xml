@@ -1,3 +1,27 @@
-<resources>
-    <string name="app_name">Falkmanite</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Music Player</string>
+
+    <string name="search">search</string>
+    <string name="no_songs_found">no songs found</string>
+    <string name="_00_00">00:00</string>
+    <string name="play_pause">play/pause</string>
+    <string name="stop">stop</string>
+    <string name="add_playlist">Add Playlist</string>
+    <string name="load_playlist">Load Playlist</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="no_songs_click_search">no songs loaded, click search to load songs</string>
+    <string name="choose_playlist_to_load">choose playlist to load</string>
+    <string name="choose_playlist_to_delete">choose playlist to delete</string>
+    <string name="all_songs">All Songs</string>
+
+    <string name="descriptionSongItemImgBtnPlayPause">Button with play/pause icon</string>
+
+    <string name="toolsTextSongArtist" tools:ignore="Typos">artist1</string>
+    <string name="toolsTextSongTitle" tools:ignore="Typos">title1</string>
+    <string name="toolsTextSongDuration">1:00</string>
+
+    <string name="playlist_title">Playlist Title</string>
+    <string name="add_at_least_one_song_to_your_playlist">Add at least one song to your playlist</string>
+    <string name="add_a_name_to_your_playlist">Add a name to your playlist</string>
+    <string name="all_songs_is_a_reserved_name_choose_another_playlist_name">All Songs is a reserved name choose another playlist name</string>
 </resources>
