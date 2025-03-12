@@ -24,10 +24,13 @@ import com.example.falkmanite.domain.usecase.SetSongProgressUseCase
 import com.example.falkmanite.domain.usecase.StopCurrentTrackUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,8 +52,9 @@ class SharedViewModel @Inject constructor(
     @ApplicationContext context: Context
 ) : ViewModel(), OnTrackCompletionListener {
 
-    private val _uiState = MutableStateFlow<UiState>(cache.read().map(playerStateUiMapper))
-    val uiState: StateFlow<UiState> = _uiState
+
+    private val _uiState = MutableStateFlow<UiState?>(null)
+    val uiState: StateFlow<UiState?> = _uiState
 
     val progress: StateFlow<ProgressStateUi> = progressState.map(progressUiMapper)
 
@@ -61,6 +65,8 @@ class SharedViewModel @Inject constructor(
     val askPermission: StateFlow<Boolean> = _askPermission
 
     fun resetAskPermission() {_askPermission.value = false}
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         if (
@@ -83,7 +89,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun playOrPauseCurrentSong() = playOrPauseTrackUseCase(cache.read().currentTrack.id)
+    fun playOrPauseCurrentSong() = updateUiState { playOrPauseTrackUseCase(cache.read().currentTrack.id) }
 
     fun stopCurrentSong() = updateUiState { stopCurrentTrackUseCase() }
 
@@ -95,7 +101,7 @@ class SharedViewModel @Inject constructor(
         _singleMessage.emit(message)
     }
 
-    fun createPlaylist(name: String) = updateUiState { createPlaylistUseCase(name) }
+    fun createPlaylist(name: String) = scope.launch { updateUiStateSuspend { createPlaylistUseCase(name) } }
 
     fun isSongSelected() = cache.read().isAnySelected()
 
@@ -103,14 +109,23 @@ class SharedViewModel @Inject constructor(
 
     fun backToPlayState() = updateUiState { returnToPlayStateUseCase() }
 
-    fun deletePlaylist(playlist: Playlist) = updateUiState { deletePlaylistUseCase(playlist) }
+    fun deletePlaylist(playlist: Playlist) = scope.launch { updateUiStateSuspend { deletePlaylistUseCase(playlist) } }
 
-    fun newPlaylistOfAllSongs(title: String) =  updateUiState { loadAllSongsPlaylistUseCase(title) }
+    fun newPlaylistOfAllSongs(title: String) =  scope.launch {
+        loadAllSongsPlaylistUseCase(title).let {
+            if (it == null) showMessage("no songs found on device")
+            updateUiStateSuspend { it }
+        }
+    }
 
     fun setSongProgress(sec: Int) { setSongProgressUseCase(sec * 1000) }
 
     private fun updateUiState(stateProducer: () -> PlayerState) {
         _uiState.value = stateProducer().map(playerStateUiMapper)
+    }
+
+    private suspend fun updateUiStateSuspend(stateProducer: suspend () -> PlayerState?) {
+        _uiState.value = stateProducer()?.map(playerStateUiMapper)
     }
 
     override fun onTrackCompletion() {

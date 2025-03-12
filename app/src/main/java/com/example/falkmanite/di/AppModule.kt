@@ -5,7 +5,8 @@ import com.example.falkmanite.data.PlayerStateCache
 import com.example.falkmanite.data.PlaylistDataSource
 import com.example.falkmanite.data.SongDataSource
 import com.example.falkmanite.data.SongRepository
-import com.example.falkmanite.data.db.DBHelper
+import com.example.falkmanite.data.db.AppDatabase
+import com.example.falkmanite.data.db.PlaylistDao
 import com.example.falkmanite.domain.InMemoryCache
 import com.example.falkmanite.domain.PlayerState
 import com.example.falkmanite.domain.PlayerStateMapper
@@ -34,14 +35,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePlaylistDataSource(dbHelper: DBHelper): PlaylistDataSource {
-        return PlaylistDataSource(dbHelper)
+    fun providePlaylistDataSource(dao: PlaylistDao): PlaylistDataSource {
+        return PlaylistDataSource(dao)
     }
 
     @Provides
     @Singleton
-    fun provideDbHelper(@ApplicationContext context: Context): DBHelper {
-        return DBHelper(context)
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideShopListDao(db: AppDatabase): PlaylistDao {
+        return db.playlistDao()
     }
 
     @Provides

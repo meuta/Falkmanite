@@ -41,7 +41,7 @@ class MainPlayerControllerFragment : Fragment() {
 
         binding.controllerBtnPlayPause.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                if (viewModel.uiState.first().tracks.isNotEmpty()) {
+                viewModel.uiState.first()?.let {
                     viewModel.playOrPauseCurrentSong()
                 }
             }
@@ -49,7 +49,7 @@ class MainPlayerControllerFragment : Fragment() {
 
         binding.controllerBtnStop.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                if (viewModel.uiState.first().tracks.isNotEmpty()) viewModel.stopCurrentSong()
+                viewModel.uiState.first()?.let { viewModel.stopCurrentSong() }
             }
         }
 
@@ -57,9 +57,9 @@ class MainPlayerControllerFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect {
+                viewModel.uiState.collect { state ->
 //                    Log.d(TAG, "onViewCreated: duration.collect = ${it.duration}")
-                    setControllerSeekBar(it)
+                    state?.let { setControllerSeekBar(it) }
                 }
             }
         }

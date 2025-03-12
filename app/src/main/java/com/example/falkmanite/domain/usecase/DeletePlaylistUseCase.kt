@@ -5,14 +5,14 @@ import com.example.falkmanite.domain.Mode
 import com.example.falkmanite.domain.PlayerState
 import com.example.falkmanite.domain.Playlist
 import com.example.falkmanite.domain.Repository
-import com.example.falkmanite.domain.UseCase
+import com.example.falkmanite.domain.SuspendUseCase
 import javax.inject.Inject
 
 class DeletePlaylistUseCase @Inject constructor(
     private val repository: Repository,
     private val playerState: InMemoryCache<PlayerState>
-) : UseCase<Playlist, PlayerState> {
-    override fun invoke(data: Playlist): PlayerState {
+) : SuspendUseCase<Playlist, PlayerState> {
+    override suspend fun invoke(data: Playlist): PlayerState {
         repository.deletePlaylist(data)
         var state = playerState.read()
         val playlists = repository.playlists()

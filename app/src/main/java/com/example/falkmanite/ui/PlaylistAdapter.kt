@@ -55,6 +55,8 @@ class PlaylistAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun clear() = songItems.clear()
+
     inner class SongViewHolder(binding: ListItemSongBinding) : BindViewHolder(binding.root) {
         private val artist: TextView = binding.songItemTvArtist
         private val title: TextView = binding.songItemTvTitle

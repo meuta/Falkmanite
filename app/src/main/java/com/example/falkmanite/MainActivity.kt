@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -57,12 +58,16 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect() {
+                viewModel.uiState.collect { state ->
 //                    Log.d(TAG, "AllSongs uiState = ${songs.map { it.map { it.id to it.trackState } }}")
-//                    Log.d(TAG, "playlists = ${it.playlists.map { it.title to it.songsIds }}")
-                    playlistAdapter.update(it)
-                    setBottomController(it)
-                    preparePlaylistDialogs(it)
+//                    Log.d(TAG, "playlists = ${it?.playlists?.map { it.title to it.songsIds }}")
+                    if (state != null) {
+                        playlistAdapter.update(state)
+                        setBottomController(state)
+                        preparePlaylistDialogs(state)
+                    } else {
+                        playlistAdapter.clear()
+                    }
                 }
             }
         }

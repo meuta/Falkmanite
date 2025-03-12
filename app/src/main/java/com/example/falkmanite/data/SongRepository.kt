@@ -11,24 +11,24 @@ class SongRepository(
     private val playlistDataSource: PlaylistDataSource
 ) : Repository {
 
-    override fun playlists() = playlistDataSource.getAllPlaylists()
+    override suspend fun playlists() = playlistDataSource.getAllPlaylists()
 
     override fun songsOfPlaylist(playlist: Playlist) = songDataSource.findByIds(playlist.songsIds)
 
     override fun allAvailableSongs() = songDataSource.readAll()
 
-    override fun deletePlaylist(playlist: Playlist) {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         playlistDataSource.deleteByName(playlist.title)
     }
 
-    override fun addSongsToPlaylist(playlist: Playlist, songs: List<Song>) {
+    override suspend fun addSongsToPlaylist(playlist: Playlist, songs: List<Song>) {
         playlistDataSource.findByName(playlist.title)?.let {
             val songsIds = (it.songsIds + songs.map { s -> s.id }).distinct()
             playlistDataSource.update(it.title, songsIds)
         }
     }
 
-    override fun createPlaylist(title: String, songsIds: List<Int>, default: Boolean): Playlist {
+    override suspend fun createPlaylist(title: String, songsIds: List<Int>, default: Boolean): Playlist {
         return playlistDataSource.createPlaylist(title, songsIds, default)
     }
 }

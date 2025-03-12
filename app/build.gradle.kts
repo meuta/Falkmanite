@@ -55,8 +55,10 @@ dependencies {
     ksp("com.google.dagger:hilt-compiler:2.48")
 
     implementation("androidx.activity:activity-ktx:1.10.1")
-
     implementation("androidx.fragment:fragment-ktx:1.8.6")
+
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
