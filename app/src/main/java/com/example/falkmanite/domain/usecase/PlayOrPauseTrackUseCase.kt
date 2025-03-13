@@ -14,15 +14,18 @@ class PlayOrPauseTrackUseCase @Inject constructor(
     override fun invoke(data: Int): PlayerState {
         val state = playerState.read()
 
+
         with(state) {
-            if (currentTrack.id != data) {
-                player.createPlayer(data)
-                player.playTrack()
-                currentTrack = Track(songsOfPlaylist.first { it.id == data }).apply { play() }
-            } else {
-                if (player.playerIsNull()) player.createPlayer(data)
-                if (player.isPlaying()) player.pauseTrack() else player.playTrack()
-                currentTrack.switchPlaying()
+            if (currentTrack.id != Track.UNDEFINED_ID) {
+                if (currentTrack.id != data) {
+                    player.createPlayer(data)
+                    player.playTrack()
+                    currentTrack = Track(songsOfPlaylist.first { it.id == data }).apply { play() }
+                } else {
+                    if (player.playerIsNull()) player.createPlayer(data)
+                    if (player.isPlaying()) player.pauseTrack() else player.playTrack()
+                    currentTrack.switchPlaying()
+                }
             }
         }
 //        Log.d(TAG, "PlayOrPause AllSongs currentTrack = ${ state.currentTrack }")

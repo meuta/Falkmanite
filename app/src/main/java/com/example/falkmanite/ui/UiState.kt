@@ -13,4 +13,10 @@ data class UiState(
     fun <T> map(mapper: UiStateMapper<T>): T {
         return mapper(state, tracks, playlists, duration)
     }
+
+    companion object {
+        fun <T> mapDefault(mapper: UiStateMapper<T>): T {
+            return mapper(Mode.PLAY_MUSIC)
+        }
+    }
 }

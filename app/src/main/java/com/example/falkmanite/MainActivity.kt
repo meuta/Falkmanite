@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -63,11 +62,11 @@ class MainActivity : AppCompatActivity() {
 //                    Log.d(TAG, "playlists = ${it?.playlists?.map { it.title to it.songsIds }}")
                     if (state != null) {
                         playlistAdapter.update(state)
-                        setBottomController(state)
                         preparePlaylistDialogs(state)
                     } else {
                         playlistAdapter.clear()
                     }
+                    setBottomController(state)
                 }
             }
         }
@@ -191,8 +190,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setBottomController(uiState: UiState) {
-        val fragmentInstance = uiState.map(uiStateToFragmentMapper)
+    private fun setBottomController(uiState: UiState?) {
+        val fragmentInstance =
+            uiState?.map(uiStateToFragmentMapper) ?: UiState.mapDefault(uiStateToFragmentMapper)
         val tag = fragmentInstance.javaClass.simpleName
         if (supportFragmentManager.findFragmentByTag(tag) == null) {
             supportFragmentManager

@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.example.falkmanite.domain.ProgressState
 import com.example.falkmanite.ui.ProgressStateFlow
 import javax.inject.Singleton
@@ -23,8 +24,10 @@ class AudioPlayer(
         override fun run() {
 //            Log.d(TAG, "run: myProgress = $myProgress")
 //            Log.d(TAG, "run: MediaPlayer")
-            player?.currentPosition?.let { updateProgress(current = it) }
-            handler.postDelayed(this, 100)
+            player?.currentPosition?.let {
+                updateProgress(current = it)
+                handler.postDelayed(this, 100)
+            }
         }
     }
 
@@ -65,35 +68,45 @@ class AudioPlayer(
     fun playTrack() {
 //        Log.d(TAG, "play: mp.currentPosition = ${player?.currentPosition}")
 //        Log.d(TAG, "play: call")
-        player?.start()
-        runProgress(true)
+        player?.let {
+            it.start()
+            runProgress(true)
+        }
     }
 
     fun pauseTrack() {
-        player?.pause()
-        runProgress(false)
+        player?.let {
+            it.pause()
+            runProgress(false)
+        }
     }
 
 
     fun stopTrack() {
 //        Log.d(TAG, "stop: call")
-        player?.stop()
-        player?.prepare()
-        seekTo(0)
-        runProgress(false)
+        player?.let {
+            it.stop()
+            it.prepare()
+            seekTo(0)
+            runProgress(false)
+        }
     }
 
     fun seekTo(msec: Int) {
-        player?.seekTo(msec)
-//        Log.d(TAG, "seekTo: progress seek to ${player?.currentPosition}")
-        updateProgress(current = msec)
+        player?.let {
+            it.seekTo(msec)
+//            Log.d(TAG, "seekTo: progress seek to ${it.currentPosition}")
+            updateProgress(current = msec)
+        }
     }
 
 
     private fun destroyPlayer() {
-        player?.release()
-        player = null
-        runProgress(false)
+        player?.let {
+            it.release()
+            player = null
+            runProgress(false)
+        }
     }
 
     companion object {

@@ -8,6 +8,7 @@ import com.example.falkmanite.ui.SongUi
 interface UiStateMapper<T> {
 //    operator fun invoke(state: Mode, songs: List<SongUi>, playlists: List<Playlist>): T
     operator fun invoke(state: Mode, songs: List<SongUi>, playlists: List<Playlist>, duration: Int): T
+    operator fun invoke(state: Mode): T = invoke(state, emptyList(), emptyList(), 0)
 
     class ToFragment : UiStateMapper<Fragment> {
         override fun invoke(

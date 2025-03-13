@@ -1,6 +1,7 @@
 package com.example.falkmanite.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.falkmanite.databinding.FragmentMainPlayerControllerBinding
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.example.falkmanite.domain.Mode
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,17 +40,11 @@ class MainPlayerControllerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.controllerBtnPlayPause.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.uiState.first()?.let {
-                    viewModel.playOrPauseCurrentSong()
-                }
-            }
+            viewModel.playOrPauseCurrentSong()
         }
 
         binding.controllerBtnStop.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.uiState.first()?.let { viewModel.stopCurrentSong() }
-            }
+            viewModel.stopCurrentSong()
         }
 
         setupSeekbar()
@@ -58,7 +52,7 @@ class MainPlayerControllerFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-//                    Log.d(TAG, "onViewCreated: duration.collect = ${it.duration}")
+//                    Log.d(TAG, "onViewCreated: duration.collect = ${state?.duration}")
                     state?.let { setControllerSeekBar(it) }
                 }
             }

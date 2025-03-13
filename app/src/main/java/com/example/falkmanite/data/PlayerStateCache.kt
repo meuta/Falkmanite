@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PlayerStateCache : InMemoryCache<PlayerState> {
-    private var currentTrack: Track = Track(Song(-1, "", "", 0))
+    private var currentTrack: Track = Track(Song(Track.UNDEFINED_ID, "", "", 0))
     private var mode: Mode = Mode.PLAY_MUSIC
 //    private var currentPlaylist: Playlist = Playlist(-1, "", emptyList())
     private var currentPlaylist: Playlist = Playlist("", emptyList())

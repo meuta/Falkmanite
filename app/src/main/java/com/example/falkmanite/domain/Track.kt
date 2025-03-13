@@ -22,6 +22,10 @@ data class Track(
     }
 
     fun isPlaying() = trackState == TrackState.PLAYING
+
+    companion object {
+        const val UNDEFINED_ID = -1
+    }
 }
 
 enum class TrackState {
