@@ -47,15 +47,16 @@ class PlaylistAdapter(
         return StringFormatter().format(this)
     }
 
-    fun update(uiState: UiState) {
-        val diffCallback = SongDiffer(songItems, uiState.tracks)
+
+    fun update(uiState: UiState?) {
+        val newSongList = uiState?.tracks ?: emptyList()
+        val diffCallback = SongDiffer(songItems, newSongList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         songItems.clear()
-        songItems.addAll(uiState.tracks)
+        songItems.addAll(newSongList)
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun clear() = songItems.clear()
 
     inner class SongViewHolder(binding: ListItemSongBinding) : BindViewHolder(binding.root) {
         private val artist: TextView = binding.songItemTvArtist

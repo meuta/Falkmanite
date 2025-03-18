@@ -1,7 +1,6 @@
 package com.example.falkmanite.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.falkmanite.databinding.FragmentMainPlayerControllerBinding
 import kotlinx.coroutines.launch
-import com.example.falkmanite.domain.Mode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +23,7 @@ class MainPlayerControllerFragment : Fragment() {
 
     private val viewModel: SharedViewModel by activityViewModels()
 
-    private var isProgressRunning = false
+    private var isProgressTouched = false
 
 
     override fun onCreateView(
@@ -51,21 +49,16 @@ class MainPlayerControllerFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-//                    Log.d(TAG, "onViewCreated: duration.collect = ${state?.duration}")
-                    state?.let { setControllerSeekBar(it) }
-                }
-            }
-        }
-
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.progress.collect {
+                viewModel.progressFlow.collect {
 //                    Log.d(TAG, "onViewCreated: progress = ${it.currentSec}")
 //                    Log.d(TAG, "onViewCreated: progress = ${it.currentTimeSting}")
-                    if (isProgressRunning.not()) binding.controllerSeekBar.progress = it.currentSec
-                    binding.controllerTvCurrentTime.text = it.currentTimeSting
+                    with(binding) {
+                        if (!isProgressTouched) controllerSeekBar.progress = it.currentPositionSec
+                        controllerTvCurrentTime.text = it.currentPositionSting
+                        controllerTvTotalTime.text = it.durationString
+                        controllerSeekBar.max = it.durationSec
+                    }
+
                 }
             }
         }
@@ -76,25 +69,16 @@ class MainPlayerControllerFragment : Fragment() {
 
             override fun onProgressChanged(seek: SeekBar, progress: Int, fromUser: Boolean) = Unit
 
-            override fun onStartTrackingTouch(seek: SeekBar) { isProgressRunning = true }
+            override fun onStartTrackingTouch(seek: SeekBar) { isProgressTouched = true }
 
             override fun onStopTrackingTouch(seek: SeekBar) {
 //                Log.d(TAG, "setupSeekbar: currentProgress = ${seek.progress}")
                 viewModel.setSongProgress(seek.progress)
-                isProgressRunning = false
+                isProgressTouched = false
             }
         }
 
         binding.controllerSeekBar.setOnSeekBarChangeListener(seekAdapter)
-    }
-
-
-    private fun setControllerSeekBar(it: UiState) {
-        if (it.tracks.isNotEmpty() && it.state == Mode.PLAY_MUSIC) {
-            val max = it.duration
-            binding.controllerSeekBar.max = max / 1000
-            binding.controllerTvTotalTime.text = StringFormatter().format(max)
-        }
     }
 
     override fun onDestroy() {

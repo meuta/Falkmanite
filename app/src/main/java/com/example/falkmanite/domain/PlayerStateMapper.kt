@@ -41,8 +41,7 @@ interface PlayerStateMapper<T> {
                 }
             }
 
-//            return UiState(mode, updatedSongs, playlists)
-            return UiState(mode, updatedSongs, playlists, currentTrack.duration)
+            return UiState(mode, updatedSongs, playlists)
         }
     }
 

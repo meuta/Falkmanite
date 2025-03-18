@@ -5,15 +5,19 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import com.example.falkmanite.domain.ProgressState
+import com.example.falkmanite.domain.InMemoryCache
+import com.example.falkmanite.domain.PlayerState
+import com.example.falkmanite.domain.Track
+import com.example.falkmanite.domain.TrackState
 import com.example.falkmanite.ui.ProgressStateFlow
 import javax.inject.Singleton
 
 @Singleton
 class AudioPlayer(
     private val appContext: Context,
-    private val progressState: ProgressStateFlow
+    private val progressState: ProgressStateFlow,
+    private val playerState: InMemoryCache<PlayerState>
+
 ) {
 
     private var player: MediaPlayer? = null
@@ -22,10 +26,10 @@ class AudioPlayer(
 
     private val updateProgress: Runnable = object : Runnable {
         override fun run() {
-//            Log.d(TAG, "run: myProgress = $myProgress")
-//            Log.d(TAG, "run: MediaPlayer")
-            player?.currentPosition?.let {
-                updateProgress(current = it)
+            player?.let {
+//                Log.d(TAG, "run: currentPosition = ${it.currentPosition}")
+//                Log.d(TAG, "run:        duration = ${it.duration}")
+                updateProgress(current = minOf(it.currentPosition, it.duration))
                 handler.postDelayed(this, 100)
             }
         }
@@ -35,12 +39,21 @@ class AudioPlayer(
         if (run) updateProgress.run() else handler.removeCallbacks(updateProgress)
     }
 
-    private fun updateProgress(current: Int = 0, isFinished: Boolean = false) {
-//        Log.d(TAG, "MediaPlayer updateProgress: Progress = $current")
-        progressState.update(
-            if (isFinished) ProgressState(isFinished = true) else ProgressState(current = current)
-        )
+
+    private fun updateProgress(current: Int = 0) {
+        progressState.update(progressState.value().copy(current = current))
     }
+
+
+    private fun updateProgressFinish() {
+        progressState.update(progressState.value().copy(isFinished = true))
+    }
+
+    private fun updateDuration(duration: Int?) {
+//        Log.d(TAG, "updateDuration: duration = $duration")
+        duration?.let { progressState.update(progressState.value().copy(duration = it)) }
+    }
+
 
     fun playerIsNull() = player == null
 
@@ -60,8 +73,12 @@ class AudioPlayer(
         player?.setOnCompletionListener {
             seekTo(0)
             runProgress(false)
-            updateProgress(isFinished = true)
+            updateProgressFinish()
+
+            playNextTrack()
         }
+
+        updateDuration(player?.duration)
     }
 
 
@@ -81,6 +98,23 @@ class AudioPlayer(
         }
     }
 
+    fun playNextTrack() {
+
+        val state = playerState.read()
+
+        val songIdsList = state.currentPlaylist.songsIds
+        val currentSongId = state.currentTrack.id
+
+        val nextSongId = songIdsList.next(currentSongId)
+
+        createPlayer(nextSongId)
+        playTrack()
+
+        state.currentTrack = Track(state.songsOfPlaylist.first{ it.id == nextSongId }, TrackState.PLAYING)
+        playerState.save(state)
+    }
+
+    fun <T> List<T>.next(item: T) = this[(withIndex().first { it.value == item }.index + 1) % size]
 
     fun stopTrack() {
 //        Log.d(TAG, "stop: call")

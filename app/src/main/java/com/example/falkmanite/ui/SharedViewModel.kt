@@ -52,11 +52,12 @@ class SharedViewModel @Inject constructor(
     @ApplicationContext context: Context
 ) : ViewModel(), OnTrackCompletionListener {
 
+    private val getStringResource: (Int) -> String  = { id -> context.getString(id) }
 
     private val _uiState = MutableStateFlow<UiState?>(null)
     val uiState: StateFlow<UiState?> = _uiState
 
-    val progress: StateFlow<ProgressStateUi> = progressState.map(progressUiMapper)
+    val progressFlow: StateFlow<ProgressStateUi> = progressState.map(progressUiMapper)
 
     private var _singleMessage = MutableSharedFlow<String>()
     val singleMessage: SharedFlow<String> = _singleMessage
@@ -113,7 +114,7 @@ class SharedViewModel @Inject constructor(
 
     fun newPlaylistOfAllSongs(title: String) =  scope.launch {
         loadAllSongsPlaylistUseCase(title).let {
-            if (it == null) showMessage("no songs found on device")
+            if (it == null) showMessage(getStringResource(R.string.no_songs_found_on_device))
             updateUiStateSuspend { it }
         }
     }
@@ -129,10 +130,13 @@ class SharedViewModel @Inject constructor(
     }
 
     override fun onTrackCompletion() {
-        cache.save(cache.read().apply { currentTrack.stop() })
-        updateUiState { cache.read() }
+        updateUiFromCache()
     }
 
+
+    fun updateUiFromCache() {
+        updateUiState { cache.read() }
+    }
 
     companion object {
         const val TAG = "SharedViewModel"

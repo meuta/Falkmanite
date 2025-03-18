@@ -1,5 +1,6 @@
 package com.example.falkmanite.ui
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,5 +24,11 @@ class ProgressStateFlow {
         return stateFlow
             .map { mapper(it) }
             .stateIn(scope, SharingStarted.Lazily, mapper(ProgressState()))
+    }
+
+    fun value() = stateFlow.value
+
+    companion object {
+        private const val TAG = "ProgressStateFlow"
     }
 }

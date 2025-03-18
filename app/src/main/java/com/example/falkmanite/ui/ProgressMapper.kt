@@ -7,9 +7,18 @@ import javax.inject.Singleton
 class ProgressMapper(private val stringFormatter: StringFormatter) {
 
     operator fun invoke(progressState: ProgressState): ProgressStateUi {
-        val currentTimeSting = stringFormatter.format(progressState.current)
-        val currentSec = (progressState.current / 1000)
-        return ProgressStateUi(currentSec, currentTimeSting, progressState.isFinished)
+        val currentPositionSec = progressState.current / 1000
+        val currentPositionString = stringFormatter.format(progressState.current)
+        val durationSec = progressState.duration / 1000
+        val durationString = stringFormatter.format(progressState.duration)
+
+        return ProgressStateUi(
+            currentPositionSec,
+            currentPositionString,
+            progressState.isFinished,
+            durationSec,
+            durationString
+        )
     }
 
     companion object {

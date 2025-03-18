@@ -91,9 +91,10 @@ object AppModule {
     @Singleton
     fun provideMediaPlayer(
         @ApplicationContext context: Context,
-        progressStateFlow: ProgressStateFlow
+        progressStateFlow: ProgressStateFlow,
+        playerState: InMemoryCache<PlayerState>
     ): AudioPlayer {
-        return AudioPlayer(context, progressStateFlow)
+        return AudioPlayer(context, progressStateFlow, playerState)
     }
 
 }

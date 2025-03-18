@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -36,18 +37,21 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: SharedViewModel by viewModels()
 
+
+    private val playlistAdapter = PlaylistAdapter(
+        object : PlaylistAdapter.ClickListener {
+            override fun onClick(id: Int) = viewModel.handleItemSongClick(id)
+            override fun onLongClick(id: Int) = viewModel.handleItemSongLongClick(id)
+        }
+    )
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         addMenuProvider(menuProvider)
 
-        val playlistAdapter = PlaylistAdapter(
-            object : PlaylistAdapter.ClickListener {
-                override fun onClick(id: Int) = viewModel.handleItemSongClick(id)
-                override fun onLongClick(id: Int) = viewModel.handleItemSongLongClick(id)
-            }
-        )
 
         binding.mainSongList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -60,12 +64,10 @@ class MainActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
 //                    Log.d(TAG, "AllSongs uiState = ${songs.map { it.map { it.id to it.trackState } }}")
 //                    Log.d(TAG, "playlists = ${it?.playlists?.map { it.title to it.songsIds }}")
-                    if (state != null) {
-                        playlistAdapter.update(state)
-                        preparePlaylistDialogs(state)
-                    } else {
-                        playlistAdapter.clear()
-                    }
+//                    Log.d(TAG, "songs = ${state?.tracks?.map { (it as? SongUi.SongUiBase)?.let { listOf(it.id, it.isCurrent(), it.isPlaying()) } } }")
+
+                    playlistAdapter.update(state)
+                    preparePlaylistDialogs(state)
                     setBottomController(state)
                 }
             }
@@ -81,8 +83,10 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.progress.collect {
+                viewModel.progressFlow.collect {
 //                    Log.d(TAG, "onCreate: progress = ${it.currentTimeSting}")
+//                    Log.d(TAG, "onCreate: progress to isFinished = ${it.currentTimeSting to it.isFinished}")
+//                    if (it.isFinished )Log.d(TAG, "onCreate: isFinished = ${it.isFinished}")
                     it.complete(viewModel)
                 }
             }
@@ -143,15 +147,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun preparePlaylistDialogs(uiState: UiState) {
-        selectPlaylistDialog =
-            ListDialog(getString(R.string.choose_playlist_to_load), uiState.playlists) {
-                viewModel.loadSongsOfPlaylist(it)
+    private fun preparePlaylistDialogs(uiState: UiState?) {
+        uiState?.let {
+            selectPlaylistDialog =
+                ListDialog(getString(R.string.choose_playlist_to_load), uiState.playlists) {
+                    viewModel.loadSongsOfPlaylist(it)
+                }
+            deletePlaylistDialog = ListDialog(
+                getString(R.string.choose_playlist_to_delete),
+                uiState.playlists.filterNot { it.title == getString(R.string.all_songs) }) {
+                viewModel.deletePlaylist(it)
             }
-        deletePlaylistDialog = ListDialog(
-            getString(R.string.choose_playlist_to_delete),
-            uiState.playlists.filterNot { it.title == getString(R.string.all_songs) }) {
-            viewModel.deletePlaylist(it)
         }
     }
 
@@ -200,6 +206,12 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.mainFragmentContainer, fragmentInstance, tag)
                 .commit()
         }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateUiFromCache()
     }
 
 

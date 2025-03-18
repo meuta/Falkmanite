@@ -6,16 +6,14 @@ import com.example.falkmanite.ui.MainPlayerControllerFragment
 import com.example.falkmanite.ui.SongUi
 
 interface UiStateMapper<T> {
-//    operator fun invoke(state: Mode, songs: List<SongUi>, playlists: List<Playlist>): T
-    operator fun invoke(state: Mode, songs: List<SongUi>, playlists: List<Playlist>, duration: Int): T
-    operator fun invoke(state: Mode): T = invoke(state, emptyList(), emptyList(), 0)
+    operator fun invoke(state: Mode, songs: List<SongUi>, playlists: List<Playlist>): T
+    operator fun invoke(state: Mode): T = invoke(state, emptyList(), emptyList())
 
     class ToFragment : UiStateMapper<Fragment> {
         override fun invoke(
             state: Mode,
             songs: List<SongUi>,
-            playlists: List<Playlist>,
-            duration: Int
+            playlists: List<Playlist>
         ): Fragment {
             return when (state) {
                 Mode.PLAY_MUSIC -> MainPlayerControllerFragment.newInstance()
