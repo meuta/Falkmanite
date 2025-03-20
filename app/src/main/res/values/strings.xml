@@ -24,4 +24,5 @@
     <string name="add_at_least_one_song_to_your_playlist">Add at least one song to your playlist</string>
     <string name="add_a_name_to_your_playlist">Add a name to your playlist</string>
     <string name="all_songs_is_a_reserved_name_choose_another_playlist_name">All Songs is a reserved name choose another playlist name</string>
+    <string name="falkmanite_service">Falkmanite Service</string>
 </resources>

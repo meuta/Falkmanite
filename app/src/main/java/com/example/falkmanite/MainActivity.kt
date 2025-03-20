@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -19,14 +18,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.falkmanite.databinding.ActivityMainBinding
-import com.example.falkmanite.ui.ListDialog
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import com.example.falkmanite.domain.UiStateMapper
+import com.example.falkmanite.service.PlayerServiceConnection
+import com.example.falkmanite.ui.ListDialog
 import com.example.falkmanite.ui.PlaylistAdapter
 import com.example.falkmanite.ui.SharedViewModel
 import com.example.falkmanite.ui.Toaster
 import com.example.falkmanite.ui.UiState
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val viewModel: SharedViewModel by viewModels()
+
+
+    @Inject
+    lateinit var playerServiceConnection: PlayerServiceConnection
 
 
     private val playlistAdapter = PlaylistAdapter(
@@ -52,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         addMenuProvider(menuProvider)
 
+        playerServiceConnection.startAndBindService()
 
         binding.mainSongList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -212,6 +218,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.updateUiFromCache()
+        playerServiceConnection.startAndBindService()
     }
 
 

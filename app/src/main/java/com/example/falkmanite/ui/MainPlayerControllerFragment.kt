@@ -50,10 +50,13 @@ class MainPlayerControllerFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.progressFlow.collect {
-//                    Log.d(TAG, "onViewCreated: progress = ${it.currentSec}")
-//                    Log.d(TAG, "onViewCreated: progress = ${it.currentTimeSting}")
+//                    Log.d(TAG, "onViewCreated: progress = ${it.currentPositionSec}")
+//                    Log.d(TAG, "onViewCreated: progress = ${it.currentPositionSting}")
+
                     with(binding) {
-                        if (!isProgressTouched) controllerSeekBar.progress = it.currentPositionSec
+                        if (!isProgressTouched) {
+                            with(controllerSeekBar) { post { progress = it.currentPositionSec } }
+                        }
                         controllerTvCurrentTime.text = it.currentPositionSting
                         controllerTvTotalTime.text = it.durationString
                         controllerSeekBar.max = it.durationSec

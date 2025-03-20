@@ -12,6 +12,7 @@ import com.example.falkmanite.domain.PlayerState
 import com.example.falkmanite.domain.PlayerStateMapper
 import com.example.falkmanite.domain.Repository
 import com.example.falkmanite.player.AudioPlayer
+import com.example.falkmanite.service.PlayerServiceConnection
 import com.example.falkmanite.ui.ProgressMapper
 import com.example.falkmanite.ui.ProgressStateFlow
 import com.example.falkmanite.ui.StringFormatter
@@ -97,4 +98,12 @@ object AppModule {
         return AudioPlayer(context, progressStateFlow, playerState)
     }
 
+
+    @Provides
+    @Singleton
+    fun providePlayerServiceConnection(
+        @ApplicationContext context: Context
+    ): PlayerServiceConnection {
+        return PlayerServiceConnection(context)
+    }
 }
