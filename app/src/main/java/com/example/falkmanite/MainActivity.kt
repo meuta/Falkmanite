@@ -108,10 +108,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        binding.mainButtonSearch.setOnClickListener {
-            checkPermissionAndPerform { viewModel.newPlaylistOfAllSongs(getString(R.string.all_songs)) }
-        }
     }
 
 
