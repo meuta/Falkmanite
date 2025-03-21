@@ -70,9 +70,8 @@ class MainPlayerControllerFragment : Fragment() {
     private fun setupSeekbar() {
         val seekAdapter = object : SeekBar.OnSeekBarChangeListener {
 
-//            override fun onProgressChanged(seek: SeekBar, progress: Int, fromUser: Boolean) = Unit
             override fun onProgressChanged(seek: SeekBar, progress: Int, fromUser: Boolean) {
-                binding.controllerTvCurrentTime.text = StringFormatter().format(progress * 1000)
+                binding.controllerTvCurrentTime.text = StringFormatter().formatSecToString(progress)
             }
 
             override fun onStartTrackingTouch(seek: SeekBar) { isProgressTouched = true }

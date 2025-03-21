@@ -44,7 +44,7 @@ class PlaylistAdapter(
     }
 
     private fun Int.timeString(): String {
-        return StringFormatter().format(this)
+        return StringFormatter().formatMillisToString(this)
     }
 
 
