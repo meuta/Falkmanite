@@ -62,7 +62,7 @@ class PlayerService : Service() {
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(returnToActivityPendingIntent)
-            .addAction(R.drawable.baseline_close_24, "", stopPendingIntent)
+            .addAction(R.drawable.ic_close, "", stopPendingIntent)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .setStyle(MediaNotificationCompat.MediaStyle())
 

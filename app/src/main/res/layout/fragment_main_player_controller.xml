@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="ui.MainPlayerControllerFragment">
+    tools:context=".ui.MainPlayerControllerFragment">
 
     <TextView
         android:id="@+id/controllerTvCurrentTime"
@@ -14,7 +14,8 @@
         android:text="@string/_00_00"
         android:textIsSelectable="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@android:color/white"/>
 
 
     <TextView
@@ -25,7 +26,8 @@
         android:text="@string/_00_00"
         android:textIsSelectable="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@android:color/white"/>
 
     <SeekBar
         android:id="@+id/controllerSeekBar"
@@ -33,6 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_child_margin"
         app:layout_constraintTop_toBottomOf="@id/controllerTvCurrentTime"
+        android:progressDrawable="@drawable/custom_seekbar"
+        android:thumb="@drawable/custom_thumb"
         />
 
 

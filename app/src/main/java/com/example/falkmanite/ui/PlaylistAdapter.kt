@@ -80,6 +80,7 @@ class PlaylistAdapter(
                 getPlayButtonIcon(if (item.isPlaying()) PAUSE_ICON else PLAY_ICON)
             )
             itemView.setBackgroundColor(if (item.isCurrent()) SELECTED_COLOR else IDLE_COLOR)
+            listOf(artist, title, duration).forEach { it.setTextColor((if (item.isCurrent()) Color.BLACK else Color.LTGRAY))  }
         }
     }
 
@@ -108,6 +109,8 @@ class PlaylistAdapter(
         private fun switch(selected: Boolean) {
             checkBox.isChecked = selected
             itemView.setBackgroundColor(if (selected) SELECTED_COLOR else IDLE_COLOR)
+            listOf(artist, title, duration).forEach { it.setTextColor((if (selected) Color.BLACK else Color.LTGRAY))  }
+
         }
     }
 
@@ -135,8 +138,8 @@ class PlaylistAdapter(
         private const val SELECTOR_LAYOUT = 2
         private const val PLAY_ICON = 11
         private const val PAUSE_ICON = 12
-        private const val SELECTED_COLOR = Color.LTGRAY
-        private const val IDLE_COLOR = Color.WHITE
+        private const val SELECTED_COLOR = Color.GRAY
+        private const val IDLE_COLOR = Color.DKGRAY
 
         private fun getSongUILayout(id: Int) = when(id) {
             R.layout.list_item_song -> SONG_LAYOUT
