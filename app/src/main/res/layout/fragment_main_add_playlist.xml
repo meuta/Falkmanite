@@ -15,7 +15,7 @@
         android:inputType="text"
         android:autofillHints="@string/playlist_title"
         android:textColorHint="@color/gray"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
