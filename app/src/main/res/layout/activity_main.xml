@@ -23,6 +23,8 @@
         android:layout_margin="@dimen/default_child_margin"
         android:orientation="vertical"
         android:background="@color/dark_gray"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@color/whitish"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_main_activity"
         app:layout_constraintBottom_toTopOf="@id/mainFragmentContainer"
