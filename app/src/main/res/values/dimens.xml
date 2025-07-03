@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_child_margin">6dp</dimen>
+    <dimen name="default_item_child_margin">3dp</dimen>
+    <dimen name="seekbar_width">4dp</dimen>
+    <dimen name="seekbar_thumb_width">16dp</dimen>
+    <dimen name="bottom_margin">10dp</dimen>
+
+</resources>
